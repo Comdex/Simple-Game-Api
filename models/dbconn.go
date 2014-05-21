@@ -42,7 +42,11 @@ func getMySQL() mysql.Conn {
 			}
 		}()
 	}
-	return <-MySQLPool
+	temp := <-MySQLPool
+	if !temp.IsConnected() {
+		temp.Reconnect()
+	}
+	return temp
 }
 
 func putMySQL(conn mysql.Conn) {
